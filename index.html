@@ -4,61 +4,110 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>대일ON(溫) | 대일관광고등학교</title>
-  <meta name="description"
-        content="학교 업무를 하나로, 소통은 따뜻하게">
+  <meta name="description" content="학교 업무를 하나로, 소통은 따뜻하게">
   <style>
-    /* 대일ON 접속 페이지 */
+    /* GitHub Pages 대일ON 접속 페이지 */
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: "Malgun Gothic", sans-serif;
-      background: #edf3fa;
+      padding: 24px;
+      background: linear-gradient(135deg, #eaf2ff, #f8fbff);
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
       color: #17365d;
-      text-align: center;
     }
     .card {
-      padding: 35px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+      width: 100%;
+      max-width: 500px;
+      padding: 46px 30px;
+      background: #fff;
+      border: 1px solid #dce7f5;
+      border-radius: 20px;
+      box-shadow: 0 12px 36px rgba(23,54,93,.10);
+      text-align: center;
     }
-    h1 { margin: 0 0 10px; font-size: 36px; }
-    .on { color: #1673df; }
-    p { color: #65758c; }
-    a {
+    .logo {
+      margin: 0;
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+    .logo .on { color: #1673df; }
+    .slogan {
+      margin-top: 14px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .school {
+      margin-top: 7px;
+      font-size: 13px;
+      color: #8190a4;
+    }
+    .message {
+      margin-top: 32px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #65758c;
+    }
+    .button {
       display: inline-block;
-      margin-top: 15px;
-      padding: 13px 25px;
+      margin-top: 20px;
+      padding: 14px 26px;
+      color: #fff;
       background: #1673df;
-      color: white;
-      border-radius: 9px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
       text-decoration: none;
     }
+    .button:hover { background: #0d55b2; }
+    .error { color: #c2410c; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>대일<span class="on">ON</span>(溫)</h1>
-    <p>학교 업무를 하나로, 소통은 따뜻하게</p>
-    <p>대일관광고등학교 통합 업무 플랫폼</p>
-    <p>학교업무대시보드로 이동합니다.</p>
-    <a id="openApp" href="#">대일ON 접속하기</a>
-  </div>
+  <main class="card">
+    <h1 class="logo">대일<span class="on">ON</span>(溫)</h1>
+    <div class="slogan">학교 업무를 하나로, 소통은 따뜻하게</div>
+    <div class="school">대일관광고등학교 통합 업무 플랫폼</div>
+    <p class="message" id="status">
+      학교업무대시보드로 이동하고 있습니다.
+    </p>
+    <a class="button" id="openApp" href="#" hidden>
+      대일ON 바로 접속하기 ↗
+    </a>
+  </main>
   <script>
-    // 이곳에 대일ON 웹 앱의 배포 URL을 입력한다.
-    // 기존 온라인 업무 소통방 URL과 혼동하지 않도록 주의한다.
+    /* ====================================================
+       반드시 대일ON GAS 웹 앱의 /exec URL로 교체한다.
+       기존 온라인 업무 소통방 URL을 입력하지 않는다.
+       ==================================================== */
     const APP_URL = "https://script.google.com/macros/s/AKfycbzbbM4aJyy0qb9w-3P6h2KgN_suW4oejUVkhA59LJJ_qGpfvSZshn3wbVI9PJqRGExQ/exec";
 
-    // 수동 접속 버튼에도 동일한 주소를 지정한다.
-    document.getElementById("openApp").href = APP_URL;
+    // 배포된 Google Apps Script 웹 앱 URL 형식인지 확인
+    const isValidUrl =
+      /^https:\/\/script\.google\.com\/macros\/s\/[^/?#]+\/exec(?:[?#]|$)/.test(APP_URL);
 
-    // 페이지 접속 시 대일ON으로 자동 이동한다.
-    // replace는 뒤로 가기 시 접속 페이지로 반복 복귀하는 것을 줄인다.
-    if (APP_URL.startsWith("https://script.google.com/macros/s/")) {
-      window.location.replace(APP_URL);
+    const status = document.getElementById("status");
+    const openApp = document.getElementById("openApp");
+
+    if (isValidUrl) {
+      // 자동 이동에 실패할 경우를 대비해 직접 접속 버튼도 제공
+      openApp.href = APP_URL;
+      openApp.hidden = false;
+      status.textContent = "잠시 후 대일ON으로 자동 이동합니다.";
+
+      // 1.5초 뒤 동일한 탭에서 GAS 웹 앱으로 이동
+      setTimeout(function() {
+        window.location.replace(APP_URL);
+      }, 1500);
+    } else {
+      // URL이 설정되지 않았으면 이동하지 않고 오류 안내
+      status.classList.add("error");
+      status.textContent =
+        "대일ON 연결 주소가 설정되지 않았습니다. index.html의 APP_URL을 확인하세요.";
     }
   </script>
 </body>
